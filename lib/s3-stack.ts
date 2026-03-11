@@ -12,5 +12,12 @@ export class S3Stack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
     });
+
+    // Output the bucket's ARN
+    new cdk.CfnOutput(this, 'MyBucketArnOutput', {
+      value: bucket.bucketArn,
+      description: 'The ARN of the S3 bucket', // Optional description
+      exportName: 'MyS3BucketARN',               // Optional name for cross-stack reference
+    });
   }
 }

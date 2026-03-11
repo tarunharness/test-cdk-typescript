@@ -16,5 +16,12 @@ export class SQSStack extends cdk.Stack {
       retentionPeriod: cdk.Duration.days(retentionDays),
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
+
+    // Output the queue's ARN
+    new cdk.CfnOutput(this, 'MyQueueArnOutput', {
+      value: queue.queueArn,
+      description: 'The ARN of the SQS queue', // Optional description
+      exportName: 'MySQSQueueARN',               // Optional name for cross-stack reference
+    });
   }
 }
