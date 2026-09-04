@@ -7,7 +7,7 @@ export class S3Stack extends cdk.Stack {
     super(scope, id, props);
 
     const bucket = new s3.Bucket(this, 'sunny-cdk-test-bucket-01', {
-      bucketName: 'sunny-cdk-test-bucket-01',
+      bucketName: 'sunny-cdk-test-bucket-04',
       versioned: true,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
