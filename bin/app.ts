@@ -8,7 +8,7 @@ import { SQSStack } from '../lib/sqs-stack';
 const app = new cdk.App();
 
 const testvar = app.node.tryGetContext('TEST_VAR') ?? 'FAIL';
-console.log(`[CDK Context] TEST_VAR=${testvar});
+console.log('[CDK Context] env=' + env);
 
 new S3Stack(app, 'S3Stack');
 new SQSStack(app, 'SQSStack');
