@@ -12,10 +12,10 @@ console.log('[CDK Context] testvar=' + testvar);
 
 // Reproduces IAC-10600: the construct id (first arg) differs from the CloudFormation
 // stackName. cdk.out/<construct id>.template.json is named after the construct id, while
-// manifest.json carries the real stack name (e.g. S3Stack-int).
+// manifest.json carries the real stack name (e.g. S3Stack).
 const stage = process.env.CDK_STAGE ?? app.node.tryGetContext('stage') ?? 'int';
 console.log('[CDK Stage] stage=' + stage);
 
-new S3Stack(app, 'S3Stack', { stackName: `S3Stack-${stage}` });
-new SQSStack(app, 'SQSStack', { stackName: `SQSStack-${stage}` });
+new S3Stack(app, `S3Stack-${stage}`, { stackName: 'S3Stack' });
+new SQSStack(app, `SQSStack-${stage}`, { stackName: 'SQSStack' });
 // new EC2Stack(app, 'EC2Stack');

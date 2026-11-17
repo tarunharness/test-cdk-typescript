@@ -69,16 +69,16 @@ The following context values are defined in `cdk.json`:
 
 ## Reproducing IAC-10600 (stack name parity in Harness IaCM CDK steps)
 
-This branch gives each stack an explicit `stackName` (`S3Stack-<stage>`, `SQSStack-<stage>`) that
-differs from its construct id (`S3Stack`, `SQSStack`). `<stage>` comes from the `CDK_STAGE`
+This branch gives each stack a construct id (`S3Stack-<stage>`, `SQSStack-<stage>`) that differs from
+its explicit CloudFormation `stackName` (`S3Stack`, `SQSStack`). `<stage>` comes from the `CDK_STAGE`
 environment variable (default `int`).
 
 Locally:
 ```bash
 npm install
 CDK_STAGE=int npx cdk synth
-ls cdk.out/*.template.json                      # S3Stack.template.json (construct id)
-grep -A4 '"S3Stack"' cdk.out/manifest.json      # properties.stackName = S3Stack-int
+ls cdk.out/*.template.json                         # S3Stack-int.template.json (construct id)
+grep -A4 '"S3Stack-int"' cdk.out/manifest.json     # properties.stackName = S3Stack
 ```
 
 In a Harness IaCM AWS CDK workspace (stages `synth`, `diff`, `drift`, `deploy`) pointing at this
@@ -86,6 +86,6 @@ branch, set `CDK_STAGE=int` on the steps and deploy once, then compare the step 
 
 | Step | Plugin without the fix | Expected |
 |---|---|---|
-| synth | uploads `cdk_template` / `cdk_assets` as `S3Stack` | `S3Stack-int` |
-| diff (changeset) | uses `S3Stack-int` | `S3Stack-int` |
-| drift | `DetectStackDrift` on `S3Stack` -> `Stack [S3Stack] does not exist` | uses `S3Stack-int` |
+| synth | uploads `cdk_template` / `cdk_assets` as `S3Stack-int` | `S3Stack` |
+| diff (changeset) | uses `S3Stack` | `S3Stack` |
+| drift | `DetectStackDrift` on `S3Stack-int` -> `Stack [S3Stack-int] does not exist` | uses `S3Stack` |
