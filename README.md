@@ -66,3 +66,26 @@ The following context values are defined in `cdk.json`:
 - The EC2Stack is commented out in the main app file. Uncomment it if you want to deploy the EC2 instance.
 - Make sure you have AWS credentials configured before deploying.
 - Some resources (like the S3 bucket name) are hardcoded and may need to be changed for uniqueness.
+
+## Reproducing IAC-10600 (stack name parity in Harness IaCM CDK steps)
+
+This branch gives each stack an explicit `stackName` (`S3Stack-<stage>`, `SQSStack-<stage>`) that
+differs from its construct id (`S3Stack`, `SQSStack`). `<stage>` comes from the `CDK_STAGE`
+environment variable (default `int`).
+
+Locally:
+```bash
+npm install
+CDK_STAGE=int npx cdk synth
+ls cdk.out/*.template.json                      # S3Stack.template.json (construct id)
+grep -A4 '"S3Stack"' cdk.out/manifest.json      # properties.stackName = S3Stack-int
+```
+
+In a Harness IaCM AWS CDK workspace (stages `synth`, `diff`, `drift`, `deploy`) pointing at this
+branch, set `CDK_STAGE=int` on the steps and deploy once, then compare the step logs:
+
+| Step | Plugin without the fix | Expected |
+|---|---|---|
+| synth | uploads `cdk_template` / `cdk_assets` as `S3Stack` | `S3Stack-int` |
+| diff (changeset) | uses `S3Stack-int` | `S3Stack-int` |
+| drift | `DetectStackDrift` on `S3Stack` -> `Stack [S3Stack] does not exist` | uses `S3Stack-int` |
